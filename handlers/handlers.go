@@ -39,3 +39,7 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "frontend/index.html")
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <form id="f">
+    <input type="text" name="text" id="textInput">
+    <button type="submit">Render</button>
+  </form>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('f').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = document.getElementById('textInput').value;
+      const res = await fetch('/input', {
+        method: 'POST',
+        body: text
+      });
+      const result = await res.text();
+      document.getElementById('output').textContent = result;
+    });
+  </script>
+</body>
+</html>
