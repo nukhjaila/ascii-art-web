@@ -8,6 +8,12 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
+)
+
+var (
+	filePath string
+	mu       sync.Mutex // protects counter from concurrent request races
 )
 
 func InputHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +24,7 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 
 	input := string(httpRequestBody)
 
-	bannerMap, err := banner.Load("banners/standard.txt")
+	bannerMap, err := banner.Load(filePath)
 	if err != nil {
 		fmt.Printf("Error loading template: %v\n", err)
 	}
@@ -42,4 +48,27 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "frontend/index.html")
+}
+
+func StandardHandler(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	filePath = "banners/standard.txt"
+	mu.Unlock()
+
+	fmt.Fprintf(w, "%s", filePath)
+}
+
+func ShadowHandler(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	filePath = "banners/shadow.txt"
+	mu.Unlock()
+
+	fmt.Fprintf(w, "%s", filePath)
+}
+func ThinkertoyHandler(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	filePath = "banners/thinkertoy.txt"
+	mu.Unlock()
+
+	fmt.Fprintf(w, "%s", filePath)
 }
