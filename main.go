@@ -1,7 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"ascii-art-web/handlers"
+	"net/http"
+)
 
 func main() {
-	http.ListenAndServe(":8080", nil)
+
+	http.HandleFunc("/input", handlers.InputHandler)
+
+	http.ListenAndServe(":9091", nil)
+
 }
