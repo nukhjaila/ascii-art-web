@@ -23,7 +23,6 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Error loading template: %v\n", err)
 	}
 	if input == "\\n" {
-		fmt.Println()
 		return
 	}
 	matrix, err := parser.Parse(input)
@@ -32,5 +31,11 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 		os.Exit(1)
 	}
 
-	renderer.Render(os.Stdout, matrix, bannerMap)
+	res := renderer.Render(matrix, bannerMap)
+
+	_, err = w.Write(res)
+	if err != nil {
+		fmt.Println("failed to write response:", err)
+	}
+
 }

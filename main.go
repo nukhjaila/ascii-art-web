@@ -7,7 +7,7 @@ import (
 
 func main() {
 
-	http.HandleFunc("/input", handlers.InputHandler)
+	http.HandleFunc("/", handlers.InputHandler)
 
 	http.ListenAndServe(":9091", nil)
 
