@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	filePath string
+	filePath = "banners/standard.txt"
 	mu       sync.Mutex // protects counter from concurrent request races
 )
 
@@ -23,6 +23,8 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	input := string(httpRequestBody)
+
+	filePath := getFilePath()
 
 	bannerMap, err := banner.Load(filePath)
 	if err != nil {
@@ -44,6 +46,13 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("failed to write response:", err)
 	}
 
+}
+
+func getFilePath() string {
+	mu.Lock()
+	defer mu.Unlock()
+
+	return filePath
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {

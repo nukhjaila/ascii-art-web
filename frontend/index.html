@@ -4,9 +4,9 @@
   <form id="f">
     <input type="text" name="text" id="textInput">
     <button type="submit">Render</button>
-    <button id="StndBtn">Standard</button>
-    <button id="ThnkrtBtn">ThinkerToy</button>
-    <button id="ShdBtn">Shadow</button>
+    <button type = "button" id="StndBtn">Standard</button>
+    <button type = "button" id="ThnkrtBtn">ThinkerToy</button>
+    <button type = "button" id="ShdBtn">Shadow</button>
   </form>
   <pre id="output"></pre>
 
@@ -22,16 +22,13 @@
       document.getElementById('output').textContent = result;
     });
     document.getElementById('StndBtn').addEventListener('click', async () => {
-      const res = await fetch('/standard', { method: 'POST' });
-      document.getElementById('value').textContent = await res.text();
+      await fetch('/standard', { method: 'POST' });
     });
     document.getElementById('ThnkrtBtn').addEventListener('click', async () => {
-      const res = await fetch('/thinkertoy', { method: 'POST' });
-      document.getElementById('value').textContent = await res.text();
+      await fetch('/thinkertoy', { method: 'POST' });
     });
     document.getElementById('ShdBtn').addEventListener('click', async () => {
-      const res = await fetch('/shadow', { method: 'POST' });
-      document.getElementById('value').textContent = await res.text();
+      await fetch('/shadow', { method: 'POST' });
     });
   </script>
 </body>
