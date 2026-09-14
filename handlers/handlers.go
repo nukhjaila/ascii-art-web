@@ -13,7 +13,7 @@ import (
 
 var (
 	filePath = "banners/standard.txt"
-	mu       sync.Mutex // protects counter from concurrent request races
+	mu       sync.Mutex
 )
 
 func InputHandler(w http.ResponseWriter, r *http.Request) {
