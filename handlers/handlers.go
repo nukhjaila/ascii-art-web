@@ -30,9 +30,7 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("Error loading template: %v\n", err)
 	}
-	if input == "\\n" {
-		return
-	}
+
 	matrix, err := parser.Parse(input)
 	if err != nil {
 		fmt.Printf("Error parsing text line: %v\n", err)

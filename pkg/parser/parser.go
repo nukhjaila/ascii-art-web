@@ -6,7 +6,7 @@ import (
 )
 
 func Parse(input string) ([][]rune, error) {
-	parts := strings.Split(input, "\\n")
+	parts := strings.Split(input, "\n")
 	var res [][]rune
 
 	for _, part := range parts {
