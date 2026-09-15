@@ -2,6 +2,7 @@ package main
 
 import (
 	"ascii-art-web/handlers"
+	"fmt"
 	"net/http"
 )
 
@@ -13,6 +14,8 @@ func main() {
 	http.HandleFunc("/thinkertoy", handlers.ThinkertoyHandler)
 	http.HandleFunc("/shadow", handlers.ShadowHandler)
 
-	http.ListenAndServe(":9091", nil)
+	if err := http.ListenAndServe(":9091", nil); err != nil {
+		fmt.Println("Failed to run http server", err)
+	}
 
 }
