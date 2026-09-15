@@ -14,6 +14,7 @@ func main() {
 	http.HandleFunc("/thinkertoy", handlers.ThinkertoyHandler)
 	http.HandleFunc("/shadow", handlers.ShadowHandler)
 
+	fmt.Println("Server started at localhost:9091")
 	if err := http.ListenAndServe(":9091", nil); err != nil {
 		fmt.Println("Failed to run http server", err)
 	}
