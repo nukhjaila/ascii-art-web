@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"sync"
 )
 
@@ -17,9 +16,15 @@ var (
 )
 
 func InputHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	httpRequestBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println("failed to read http request:", err)
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
 	}
 
 	input := string(httpRequestBody)
@@ -29,18 +34,21 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 	bannerMap, err := banner.Load(filePath)
 	if err != nil {
 		fmt.Printf("Error loading template: %v\n", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 
 	matrix, err := parser.Parse(input)
 	if err != nil {
-		fmt.Printf("Error parsing text line: %v\n", err)
-		os.Exit(1)
+		http.Error(w, "Bad Request: "+err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	res := renderer.Render(matrix, bannerMap)
 
-	_, err = w.Write(res)
-	if err != nil {
+	w.WriteHeader(http.StatusOK)
+
+	if _, err = w.Write(res); err != nil {
 		fmt.Println("failed to write response:", err)
 	}
 
@@ -53,29 +61,50 @@ func getFilePath() string {
 	return filePath
 }
 
+func setFilePath(p string) {
+	mu.Lock()
+	filePath = p
+	mu.Unlock()
+}
+
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	http.ServeFile(w, r, "frontend/index.html")
 }
 
 func StandardHandler(w http.ResponseWriter, r *http.Request) {
-	mu.Lock()
-	filePath = "banners/standard.txt"
-	mu.Unlock()
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	setFilePath("banners/standard.txt")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", getFilePath())
 
-	fmt.Fprintf(w, "%s", filePath)
 }
 
 func ShadowHandler(w http.ResponseWriter, r *http.Request) {
-	mu.Lock()
-	filePath = "banners/shadow.txt"
-	mu.Unlock()
-
-	fmt.Fprintf(w, "%s", filePath)
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	setFilePath("banners/shadow.txt")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", getFilePath())
 }
 func ThinkertoyHandler(w http.ResponseWriter, r *http.Request) {
-	mu.Lock()
-	filePath = "banners/thinkertoy.txt"
-	mu.Unlock()
-
-	fmt.Fprintf(w, "%s", filePath)
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	setFilePath("banners/thinkertoy.txt")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", getFilePath())
 }
